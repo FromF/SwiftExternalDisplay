@@ -8,7 +8,6 @@
 
 import UIKit
 
-#if false   //UISceneは無効にする
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
@@ -51,4 +50,3 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 
 }
-#endif  //UISceneは無効にする
