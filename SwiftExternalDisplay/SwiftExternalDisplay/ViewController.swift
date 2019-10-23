@@ -27,24 +27,25 @@ class ViewController: UIViewController {
     private func setupNotification() {
         let center = NotificationCenter.default
         
-        center.addObserver(self, selector: #selector(externalScreenDidConnect(notification:)), name: UIScreen.didConnectNotification, object: nil)
+        center.addObserver(self, selector: #selector(externalScreenWillConnect(notification:)), name: UIScene.willConnectNotification, object: nil)
 
-        center.addObserver(self, selector: #selector(externalScreenDidDisconnect(notification:)), name: UIScreen.didDisconnectNotification, object: nil)
+        center.addObserver(self, selector: #selector(externalScreenDidDisconnect(notification:)), name: UIScene.didDisconnectNotification, object: nil)
 
     }
     
     /// 外部ディスプレイを接続されたときに処理する
     /// - Parameter notification:接続されたUIScreenインスタンス
-    @objc func externalScreenDidConnect(notification: NSNotification) {
-        guard let screen = notification.object as? UIScreen else { return }
+    @objc func externalScreenWillConnect(notification: NSNotification) {
+        guard let windowScene = notification.object as? UIWindowScene else { return }
         guard externalWindow == nil else { return }
         guard let viewController = self.storyboard?.instantiateViewController(withIdentifier: "ExternalDisplayViewController") as? ExternalDisplayViewController else { return }
 
-        externalWindow = UIWindow(frame: screen.bounds)
-        externalWindow?.rootViewController = viewController
-        //iOS13.0からDeprecatedになっているがUISceneを無効化しているのでこちらのプロパティーを設定する
-        externalWindow?.screen = screen
-        externalWindow?.isHidden = false
+        externalWindow = UIWindow(frame: windowScene.screen.bounds)
+        
+        guard let _externalWindow = externalWindow else { return }
+        _externalWindow.rootViewController = viewController
+        _externalWindow.windowScene = windowScene
+        _externalWindow.isHidden = false
         
         //外部ディスプレイのViewControllerをあとで操作できるようにインスタンスを保持する
         externalDisplayViewController = viewController
@@ -53,15 +54,14 @@ class ViewController: UIViewController {
     /// 外部ディスプレイを切断されたときに処理する
     /// - Parameter notification: 切断されたUIScreenインスタンス
     @objc func externalScreenDidDisconnect(notification: NSNotification) {
-        guard let screen = notification.object as? UIScreen else { return }
+        guard let windowScene = notification.object as? UIWindowScene else { return }
         guard let _externalWindow = externalWindow else { return }
+        guard let _externalWindowScene = _externalWindow.windowScene else { return }
         
         //切断通知されたscreenと現在表示中のscreenが同じかチェックする
-        if screen == _externalWindow.screen {
+        if windowScene == _externalWindowScene {
             _externalWindow.isHidden = true
             externalWindow = nil
-            //外部ディスプレイのViewControllerを削除する
-            externalDisplayViewController = nil
         }
     }
 
