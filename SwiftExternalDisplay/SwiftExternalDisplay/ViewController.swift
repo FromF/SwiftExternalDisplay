@@ -34,7 +34,7 @@ class ViewController: UIViewController {
     }
     
     /// 外部ディスプレイを接続されたときに処理する
-    /// - Parameter notification:接続されたUIScreenインスタンス
+    /// - Parameter notification:接続されたUIWindowSceneインスタンス
     @objc func externalScreenWillConnect(notification: NSNotification) {
         guard let windowScene = notification.object as? UIWindowScene else { return }
         guard externalWindow == nil else { return }
@@ -52,7 +52,7 @@ class ViewController: UIViewController {
     }
     
     /// 外部ディスプレイを切断されたときに処理する
-    /// - Parameter notification: 切断されたUIScreenインスタンス
+    /// - Parameter notification: 切断されたUIWindowSceneインスタンス
     @objc func externalScreenDidDisconnect(notification: NSNotification) {
         guard let windowScene = notification.object as? UIWindowScene else { return }
         guard let _externalWindow = externalWindow else { return }
@@ -67,8 +67,3 @@ class ViewController: UIViewController {
 
     
 }
-
-//[参考サイト]
-//https://www.swiftjectivec.com/supporting-external-displays/
-//http://www.spazstik-software.com/blog/article/how-to-display-custom-content-on-a-external-screen-from-a-ios-device
-//https://stackoverflow.com/questions/56704389/overscancompensation-on-external-screen-on-ios-13-beta
